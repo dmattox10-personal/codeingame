@@ -25,11 +25,26 @@ while true do
     fuel = tonumber(next_token())
     rotate = tonumber(next_token())
     power = tonumber(next_token())
+    descent = math.abs(vSpeed)
+
+    if (descent > 39) then
+      if (power > 4) then
+        power = power + 1
+      else
+        power = 4
+      end
+    else
+      if (power == 0) then
+        power = 0
+      else
+        power = power - 1
+      end
+    end
 
     -- Write an action using print()
     -- To debug: io.stderr:write("Debug message\n")
 
 
     -- 2 integers: rotate power. rotate is the desired rotation angle (should be 0 for level 1), power is the desired thrust power (0 to 4).
-    print("0 3")
+    print(rotate .. " "..power)
 end
