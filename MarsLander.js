@@ -21,18 +21,21 @@ while (true) {
     var rotate = parseInt(inputs[5]); // the rotation angle in degrees (-90 to 90).
     var power = parseInt(inputs[6]); // the thrust power (0 to 4).
     var descent = Math.abs(vSpeed);
+    var minThrust = 0;
+    var maxThrust = 4;
+    var maxSpeed = 39;
 
-    if (descent > 39){
-      if (power < 4){
+    if (descent > maxSpeed){
+      if (power < maxThrust){
         power++;
       }
       else{
-        power = 4;
+        power = maxThrust;
       }
     }
     else {
-      if (power == 0){
-        power = 0;
+      if (power == minThrust){
+        power = minThrust;
       }
       else{
         power--;

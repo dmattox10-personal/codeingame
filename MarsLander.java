@@ -18,6 +18,9 @@ class Player {
 
         // game loop
         while (true) {
+            int maxSpeed = 39
+            int maxThrust = 4;
+            int minThrust = 0;
             int descent = 0;
             int X = in.nextInt();
             int Y = in.nextInt();
@@ -28,25 +31,25 @@ class Player {
             int power = in.nextInt(); // the thrust power (0 to 4).
             System.err.println("Descent is " + vSpeed);
             descent = Math.abs(vSpeed);
-            if (descent > 39)
+            if (descent > maxSpeed)
             {
-                if (power < 4)
+                if (power < maxThrust)
                 {
                     power++;
                     System.err.println("Increasing Thrust");
                 }
                 else
                 {
-                power = 4;
+                power = maxThrust;
                 System.err.println("Maximum Thrust");
                 }
 
             }
             else
             {
-                if (power == 0)
+                if (power == minThrust)
                 {
-                    power = 0;
+                    power = minThrust;
                     System.err.println("Zero Thrust");
                 }
                 else

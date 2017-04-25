@@ -26,16 +26,19 @@ while true do
     rotate = tonumber(next_token())
     power = tonumber(next_token())
     descent = math.abs(vSpeed)
+    minThrust = 0
+    maxThrust = 4
+    maxSpeed = 39
 
-    if (descent > 39) then
-      if (power > 4) then
+    if (descent > maxSpeed) then
+      if (power > maxThrust) then
         power = power + 1
       else
-        power = 4
+        power = maxThrust
       end
     else
-      if (power == 0) then
-        power = 0
+      if (power == minThrust) then
+        power = minThrust
       else
         power = power - 1
       end
