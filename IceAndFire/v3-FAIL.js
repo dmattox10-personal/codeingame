@@ -17,8 +17,6 @@ const ME = 0
 const OPPONENT = 1
 const NO_ONE = -1
 
-const upgrades = [1, 1, 1, 3]
-
 /**
  * Parsing functions
  */
@@ -86,10 +84,6 @@ const findDirection = (from, map, towards) => {
     return nearby.find(tile => !tile.occupiedBy) || nearby[0]
 }
 
-const purchaseOrder = (myUnits, myGold, myUpkeep) => {
-
-}
-
 let getUpkeep = (myUnits) => {
     let totalUpkeep = 0
     myUnits.forEach(unit => {
@@ -120,10 +114,10 @@ for (let i = 0; i < numberMineSpots; i++) {
  */
 while (true) {
     // Gold
-    let gold = parseInt(readline());
-    let goldIncome = parseInt(readline());
-    const goldOpponent = parseInt(readline());
-    const goldOpponentIncome = parseInt(readline());
+    let gold = parseInt(readline())
+    let goldIncome = parseInt(readline())
+    const goldOpponent = parseInt(readline()) // I don't care but this has to stay here!
+    const goldOpponentIncome = parseInt(readline()) // I don't care but this has to stay here!
 
     // Map
     const map = {}
@@ -172,25 +166,55 @@ while (true) {
 
     const orders = []
 
-    // Train
-    const emptyNearbyHQ = findNearby(myBuildings[HQ_TYPE][0], map).find(tile => !tile.occupiedBy)
-    if (emptyNearbyHQ != null) {
-        console.error('found tile to train on ')
-        const level = 1
-        const unitCost = unitCosts[level]
-        const upkeep = getUpkeep(myUnits)
-        if (gold >= unitCost.train / 60 && goldIncome >= upkeep / 60) {
-        // if (gold >= unitCost.train / 60 && goldIncome >= unitCost.upkeep / 60) { // WTF? EDIT ME!
-        // if (gold >= unitCost.train * 3 && goldIncome >= unitCost.upkeep * 3 ) {
+    // Total Upkeep
 
+    const upkeep = getUpkeep(myUnits)
+
+    // Train
+    if (myUnits.length < 9) {//adjust this for early income speed
+        const emptyNearbyHQ = findNearby(myBuildings[HQ_TYPE][0], map).find(tile => !tile.occupiedBy)
+        if (emptyNearbyHQ != null) {
+            console.error('found tile to train on ')
+            const level = 1
+            const unitCost = unitCosts[level]
             
-            const train = "TRAIN " + level + " " + emptyNearbyHQ.x + " " + emptyNearbyHQ.y
-            orders.push(train)
-            
-           //purchaseOrder(myUnits, )
+            if (gold >= unitCost.train / 60 && goldIncome >= upkeep / 60) {
+            // if (gold >= unitCost.train / 60 && goldIncome >= unitCost.upkeep / 60) { // WTF? EDIT ME!
+            // if (gold >= unitCost.train * 3 && goldIncome >= unitCost.upkeep * 3 ) {
+
+                
+                const train = "TRAIN " + level + " " + emptyNearbyHQ.x + " " + emptyNearbyHQ.y
+                orders.push(train)
+                
+            //purchaseOrder(myUnits, )
+            }
         }
     }
+    else {
+        const emptyNearbyHQ = findNearby(myBuildings[HQ_TYPE][0], map).find(tile => !tile.occupiedBy)
+        if (emptyNearbyHQ != null) {
+            console.error('found tile to train on ')
+            if (myUnits.length % 10 === 0) {
+                const level = 3
+                const train = "TRAIN " + level + " " + emptyNearbyHQ.x + " " + emptyNearbyHQ.y
+                orders.push(train)
+            }
+            else {
+            const level = 1
+            const unitCost = unitCosts[level]
+            if (gold / 3 >= unitCost.train && goldIncome / 3 >= upkeep) {
+            // if (gold >= unitCost.train / 60 && goldIncome >= unitCost.upkeep / 60) { // WTF? EDIT ME!
+            // if (gold >= unitCost.train * 3 && goldIncome >= unitCost.upkeep * 3 ) {
 
+                
+                const train = "TRAIN " + level + " " + emptyNearbyHQ.x + " " + emptyNearbyHQ.y
+                orders.push(train)
+                
+            //purchaseOrder(myUnits, )
+            }
+            }
+        }
+    }
 
     // Move
     const mapCenter = {x: 5, y: 5}

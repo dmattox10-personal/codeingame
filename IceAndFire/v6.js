@@ -1,4 +1,4 @@
-/**
+/*
  * Constants
  */
 
@@ -17,9 +17,7 @@ const ME = 0
 const OPPONENT = 1
 const NO_ONE = -1
 
-const upgrades = [1, 1, 1, 3]
-
-/**
+/*
  * Parsing functions
  */
 
@@ -59,7 +57,7 @@ const parseUnit = (line) => {
     return {id, x, y, owner, level}
 }
 
-/**
+/*
  * Utility functions
  */
 const key = ({x, y}) => {
@@ -86,22 +84,17 @@ const findDirection = (from, map, towards) => {
     return nearby.find(tile => !tile.occupiedBy) || nearby[0]
 }
 
-const purchaseOrder = (myUnits, myGold, myUpkeep) => {
-
-}
-
 let getUpkeep = (myUnits) => {
     let totalUpkeep = 0
     myUnits.forEach(unit => {
         let upkeep = unitCosts[unit.level]
         let cost = upkeep.upkeep
         totalUpkeep += cost
-        console.error(totalUpkeep)
     })
     return totalUpkeep
 }
 
-/**
+/*
  * Init
  */
 
@@ -115,7 +108,7 @@ for (let i = 0; i < numberMineSpots; i++) {
     mineSpots[x][y] = true;
 }
 
-/**
+/*
  * Game loop
  */
 while (true) {
@@ -137,7 +130,7 @@ while (true) {
             map[key(tile)] = tile
         }
     }
-
+    
     // Buildings
     const myBuildings = {};
     const enemyBuildings = {};
@@ -150,10 +143,9 @@ while (true) {
         if (!buildList[building.type]) buildList[building.type] = []
 
         buildList[building.type].push(building)
-
+        //console.error(buildList[0])
         map[key(building)].occupiedBy = building
     }
-
     // Units
     const unitCount = parseInt(readline());
     const myUnits = [];
@@ -166,16 +158,27 @@ while (true) {
         unitList.push(unit)
 
         map[key(unit)].occupiedBy = unit
+        //console.error(map.length)
     }
 
     // Orders
 
     const orders = []
-
+    let target = {}
+    let defend = {}
+    if (map['11,11'].owner === 1) {
+        target = {x: 11, y: 11}
+        defend = {x: 0, y: 11}
+    }
+    else {
+        target = {x: 0, y: 0}
+        defend = {x: 11, y: 0}
+    }
     // Train
     const emptyNearbyHQ = findNearby(myBuildings[HQ_TYPE][0], map).find(tile => !tile.occupiedBy)
+    // console.error(emptyNearbyHQ)
     if (emptyNearbyHQ != null) {
-        console.error('found tile to train on ')
+        // console.error('found tile to train on ')
         const level = 1
         const unitCost = unitCosts[level]
         const upkeep = getUpkeep(myUnits)
@@ -187,22 +190,36 @@ while (true) {
             const train = "TRAIN " + level + " " + emptyNearbyHQ.x + " " + emptyNearbyHQ.y
             orders.push(train)
             
-           //purchaseOrder(myUnits, )
         }
     }
 
 
     // Move
+    //if (emptyNearbyHQ === )
+    
     const mapCenter = {x: 5, y: 5}
     myUnits.forEach(unit => {
-        let tile = findDirection(unit, map, mapCenter)
+        let tile = findDirection(unit, map, target)
+        console.error('tile')
+        console.error(tile)
+        let wall = findDirection(unit, map, defend)
+        console.error('wall')
+        console.error(wall)
+        if (unit.id % 2 === 0) {
+            //if(!tile) return
+            const move = "MOVE " + unit.id + " " + tile.x + " " + tile.y
+            orders.push(move)
+        }
+        else {
+            //if(!wall) return
+            const move = "MOVE " + unit.id + " " + wall.x + " " + wall.y
+            orders.push(move)
+        }
         if (!tile) return;
 
-        const move = "MOVE " + unit.id + " " + tile.x + " " + tile.y
-        orders.push(move)
-        console.error(unit)
+        
     })
-
+    
     orders.push("WAIT")
     console.log(orders.join(';'));
 }
