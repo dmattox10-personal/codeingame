@@ -185,45 +185,80 @@ while (true) {
     if (map['11,11'].owner === 1) {
         target = {x: 11, y: 11}
         defend = {x: 0, y: 11}
+        tower1 = {
+            x: 1,
+            y: 1
+        }
+        tower2 = {
+            x: 2,
+            y: 2
+        }
+        tower3 = {
+            x: 3,
+            y: 3
+        }
     }
     else {
         target = {x: 0, y: 0}
         defend = {x: 11, y: 0}
+        tower1 = {
+            x: 10,
+            y: 10
+        }
+        tower2 = {
+            x: 9,
+            y: 9
+        }
+        tower3 = {
+            x: 8,
+            y: 8
+        }
     }
     // Train
-    const emptyNearbyHQ = findNearby(myBuildings[HQ_TYPE][0], map).find(tile => !tile.occupiedBy)
-    // console.error(emptyNearbyHQ)
-    if (emptyNearbyHQ != null) {
-        if (target.x === 11) { //One corner we add
-            offense = {
-                x: 0,
-                y: 0
-            }
-            defense = {
-                x: 0,
-                y: 0
-            }
+    // Build a tower
+    if (gold > 15) {
+        orders.push("BUILD TOWER " + tower1.x + " " + tower1.y)
+    }
+    if (gold > 30) {
+        orders.push("BUILD TOWER " + tower2.x + " " + tower2.y)
+    }
+    if (gold > 45) {
+        orders.push("BUILD TOWER " + tower3.x + " " + tower3.y)
+    }
+    if (target.x === 11) { //One corner we add
+        offense = {
+            x: 0,
+            y: 0
         }
-        else { // the other we subtract
-            offense = {
-                x: 11,
-                y: 11
-            }
-            defense = {
-                x: 11,
-                y: 11
-            }
+        defense = {
+            x: 0,
+            y: 0
         }
         
-        // console.error('found tile to train on ')
-        const level = 1
+    }
+    else { // the other we subtract
+        offense = {
+            x: 11,
+            y: 11
+        }
+        defense = {
+            x: 11,
+            y: 11
+        }
+        
+    }
+    const emptyNearbyHQ = findNearby(myBuildings[HQ_TYPE][0], map).find(tile => !tile.occupiedBy)
+    // console.error(emptyNearbyHQ)
+    const level = 1
         const unitCost = unitCosts[level]
         const upkeep = getUpkeep(myUnits)
         var train
         var trainDefense
         var trainOffense
-        if (myUnits.length < 4) {
-            if (gold >= unitCost.train / 60 && goldIncome >= upkeep / 60) {
+    if (emptyNearbyHQ != null) {
+        // console.error('found tile to train on ')
+        if (myUnits.length < 2) {
+            if (gold >= unitCost.train && goldIncome >= upkeep) {
                 // if (gold >= unitCost.train / 60 && goldIncome >= unitCost.upkeep / 60) { // WTF? EDIT ME!
                 // if (gold >= unitCost.train * 3 && goldIncome >= unitCost.upkeep * 3 ) {
                     
@@ -234,72 +269,88 @@ while (true) {
                 }
         }
         else {
-            if (gold >= unitCost.train / 60 && goldIncome >= upkeep / 60) {
-                // if (gold >= unitCost.train / 60 && goldIncome >= unitCost.upkeep / 60) { // WTF? EDIT ME!
-                // if (gold >= unitCost.train * 3 && goldIncome >= unitCost.upkeep * 3 ) {
-                    myDefense.forEach(unit => {
-                        //console.error('Defender:')
-                        //console.error(unit.x + ', ' + unit.y)
-                        if (target.x === 11) { //One corner we add
-                            if (unit.x > defense.x) {
-                                defense.x = unit.x
-                                defense.y = unit.y
-                            }
-                        }
-                        else { // the other we subtract
-                            if (unit.x < defense.x) {
-                                defense.x = unit.x
-                                defense.y = unit.y
-                            }
-                        }
-                    })
-                    trainDefense = findNearby(defense, map).find(tile => !tile.occupiedBy)
-                    if (typeof trainDefense !== "undefined") {
-                        if (mineSpots[trainDefense.x][trainDefense.y] === true) {
-                            orders.push("BUILD MINE " + trainDefense.x + " " + trainDefense.y)
-                        }
-                    }
-                    if (typeof trainDefense !== "undefined") {
-                        orders.push("TRAIN " + level + " " + trainDefense.x + " " + trainDefense.y)
-                    }
-                    myExplore.forEach(unit => {
-                        //console.error('Explorer:')
-                        //console.error(unit.x + ', ' + unit.y)
-                        if (target.x === 11) { //One corner we add
-                            if(unit.x > offense.x) {
-                                offense.x = unit.x
-                                offense.y = unit.y
-                            }
-                        }
-                        else { // the other we subtract
-                            if(unit.x < offense.x) {
-                                offense.x = unit.x
-                                offense.y = unit.y
-                            }
-                        }
-                    })
-                    trainOffense = findNearby(offense, map).find(tile => !tile.occupiedBy)
-                    //console.error(trainOffense)
-                    if (typeof trainOffense !== "undefined") {
-                        orders.push("TRAIN " + level + " " + trainOffense.x + " " + trainOffense.y)
-                    } 
-                    
-                    //const train = "TRAIN " + level + " " + emptyNearbyHQ.x + " " + emptyNearbyHQ.y
-                    //orders.push(train)
-                    
-                }
-        }
+            return
     }
 
+    if (gold >= unitCost.train * 4 && goldIncome >= upkeep) {
+        // if (gold >= unitCost.train / 60 && goldIncome >= unitCost.upkeep / 60) { // WTF? EDIT ME!
+        // if (gold >= unitCost.train * 3 && goldIncome >= unitCost.upkeep * 3 ) {
+            myDefense.forEach(unit => {
+                //console.error('Defender:')
+                //console.error(unit.x + ', ' + unit.y)
+                if (target.x === 11) { //One corner we add
+                    if (unit.x > defense.x) {
+                        defense.x = unit.x
+                        defense.y = unit.y
+                    }
+                }
+                else { // the other we subtract
+                    if (unit.x < defense.x) {
+                        defense.x = unit.x
+                        defense.y = unit.y
+                    }
+                }
+            })
+            trainDefense = findNearby(defense, map).find(tile => !tile.occupiedBy)
+            trainOffense = findNearby(offense, map).find(tile => !tile.occupiedBy)
+            if (typeof trainDefense !== "undefined") {
+                if (mineSpots[trainDefense.x][trainDefense.y] === true) {
+                    orders.push("BUILD MINE " + trainDefense.x + " " + trainDefense.y)
+                }
+                orders.push("TRAIN " + level + " " + trainDefense.x + " " + trainDefense.y)
+                orders.push("TRAIN " + level + " " + (trainDefense.x + 1)+ " " + trainDefense.y)
+                orders.push("TRAIN " + level + " " + trainDefense.x + " " + (trainDefense.y + 1))
+            }
+            
+            myExplore.forEach(unit => {
+                //console.error('Explorer:')
+                //console.error(unit.x + ', ' + unit.y)
+                if (target.x === 11) { //One corner we add
+                    if(unit.x > offense.x) {
+                        offense.x = unit.x
+                        offense.y = unit.y
+                    }
+                }
+                else { // the other we subtract
+                    if(unit.x < offense.x) {
+                        offense.x = unit.x
+                        offense.y = unit.y
+                    }
+                }
+            })
+            
+            //console.error(trainOffense)
+            if (typeof trainOffense !== "undefined") {
+                if(mineSpots[trainOffense.x][trainOffense.y] === true) {
+                    orders.push("BUILD MINE " + trainOffense.x + " " + trainOffense.y)
+                }
+                orders.push("TRAIN " + level + " " + trainOffense.x + " " + trainOffense.y)
+                orders.push("TRAIN " + level + " " + (trainOffense.x + 1) + " " + trainOffense.y)
+                orders.push("TRAIN " + level + " " + trainOffense.x + " " + (trainOffense.y + 1))
+            } 
+            
+            //const train = "TRAIN " + level + " " + emptyNearbyHQ.x + " " + emptyNearbyHQ.y
+            //orders.push(train)
+            
+        }
+}
 
     // Move
     //if (emptyNearbyHQ === )
     
     const mapCenter = {x: 5, y: 5}
-    const vanguard = myDefense.sort((a, b) => {
-        (a.x > b.x ? 1 : -1)
+    const vanguardD = myDefense.sort((a, b) => {
+        if (a.x && b.x) {
+            (a.x > b.x ? 1 : -1)
+        }
     })
-    myDefense.forEach(unit => {
+    const vanguardO = myExplore.sort((a, b) => {
+        if (a.x && b.x) {
+            (a.x > b.x ? 1 : -1)
+        }
+    })
+    //myDefense.forEach(unit => {
+    vanguardD.forEach(unit => {
         let tile = findDirection(unit, map, defend)
         if (!tile) return
         const move = "MOVE " + unit.id + " " + tile.x + " " + tile.y
@@ -308,7 +359,8 @@ while (true) {
         
     })
 
-    myExplore.forEach(unit => {
+    //myExplore.forEach(unit => {
+    vanguardO.forEach(unit => {
         let tile = findDirection(unit, map, target)
         if (!tile) return
         const move = "MOVE " + unit.id + " " + tile.x + " " + tile.y
